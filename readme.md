@@ -1,7 +1,11 @@
 # fast api CRUD connect mongodb and run on docker
+
 1.clone this repo
+
 2.install docker
-3.run command : docker-compose up -d
+
+3.run command : `docker-compose up -d`
+
 4.testing on api : http://localhost:8000
     - post http://localhost:8000/items
         body data
@@ -20,3 +24,4 @@
     - delete http://localhost:8000/items/id
 
 thankyou for reading pythonthailand.com
+
