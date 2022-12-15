@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./app/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGO_URI
+    env_file:
+      - .env
+
+  mongo:
+    image: mongo:4.0
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
