@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 from pydantic import BaseModel
 import os
 import json
@@ -52,11 +53,11 @@ async def read_all():
 @app.get("/items/{item_id}")
 async def read_item(item_id: str):
     print(item_id)
-    item = db.items.find_one({"_id": item_id})
+    item = db.items.find_one({"_id": ObjectId(item_id) })
     if item:
         response = {
         "code": 200,
-        "message": "item found",
+        "message": "success",
         "data": {
             "item": json.loads(json_util.dumps(item))
         }
@@ -72,17 +73,33 @@ async def read_item(item_id: str):
 # Update an item by ID
 @app.put("/items/{item_id}")
 async def update_item(item_id: str, item: Item):
-    result = db.items.replace_one({"_id": item_id}, item.dict())
-    if result.matched_count:
-        return {"message": "item updated"}
+    result = db.items.update_one({"_id": ObjectId(item_id)}, {"$set": item.dict()})
+    if result.modified_count:
+        return {
+            "code": 200,
+            "message": "item updated",
+            "data": {}
+        }
     else:
-        return {"error": "item not found"}
+        return {
+            "code": 404,
+            "message": "item not found",
+            "data": {}
+        }
 
 # Delete an item by ID
 @app.delete("/items/{item_id}")
 async def delete_item(item_id: str):
-    result = db.items.delete_one({"_id": item_id})
+    result = db.items.delete_one({"_id": ObjectId(item_id)})
     if result.deleted_count:
-        return {"message": "item deleted"}
+        return {
+            "code": 200,
+            "message": "item deleted",
+            "data": {}
+        }
     else:
-        return {"error": "item not found"}
+        return {
+            "code": 404,
+            "message": "item not found",
+            "data": {}
+        }
